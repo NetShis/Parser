@@ -1,3 +1,10 @@
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.io.IOException;
+
 public class Main {
     public static void main(String[] args) {
         String vacancyTitle = "Java EE";
@@ -15,6 +22,9 @@ public class Main {
                     System.out.println("Второй аргумент задает период поиска вакансий в месяцах от 1 до 12!");
                 }
             }
+            SqlSite sqlSite = new SqlSite("https://www.sql.ru/forum/job-offers/");
+            Topic[] topics = sqlSite.topics();
+
         }
     }
 }
