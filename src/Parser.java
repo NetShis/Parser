@@ -1,5 +1,6 @@
+import java.util.ArrayList;
 import java.util.List;
 
 public interface Parser {
-    public Topic[] topics ();
+    public ArrayList<Topic> topics ();
 }

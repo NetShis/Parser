@@ -1,9 +1,5 @@
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
-import java.io.IOException;
+import java.util.ArrayList;
 
 public class Main {
     public static void main(String[] args) {
@@ -23,7 +19,10 @@ public class Main {
                 }
             }
             SqlSite sqlSite = new SqlSite("https://www.sql.ru/forum/job-offers/");
-            Topic[] topics = sqlSite.topics();
+            ArrayList<Topic> topics = sqlSite.topics();
+            for (Topic tp : topics) {
+                System.out.println(tp.getNameOfTopic() + "\t" + tp.getLink() + "\t" + tp.getDate().getTime());
+            }
 
         }
     }
