@@ -1,7 +1,7 @@
 public class Main {
     public static void main(String[] args) {
-        String vacancyTitle = "Java-программист уровня middle-senior на удаленку";
-        int jobSearchInMonths = 12;
+        String vacancyTitle = "Java";
+        int jobSearchInMonths = 1;
 
         if (args.length != 2 && args.length != 0) {
             System.out.println("Введите сайт для поиска и " +
@@ -15,8 +15,8 @@ public class Main {
                     System.out.println("Второй аргумент задает период поиска вакансий в месяцах от 1 до 12!");
                 }
             }
-            Website sqlSite = new Website("https://www.sql.ru/forum/job-offers/");
-            sqlSite.jobSearch(vacancyTitle,jobSearchInMonths);
+            Sql sqlSite = new Sql("https://www.sql.ru/forum/job-offers/", jobSearchInMonths);
+            sqlSite.jobSearch(vacancyTitle);
         }
     }
 }
