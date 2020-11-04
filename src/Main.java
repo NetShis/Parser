@@ -1,7 +1,7 @@
 public class Main {
     public static void main(String[] args) {
         String vacancyTitle = "Java";
-        int jobSearchInMonths = 1;
+        int jobSearchInMonths = 3;
 
         if (args.length != 2 && args.length != 0) {
             System.out.println("Введите сайт для поиска и " +
