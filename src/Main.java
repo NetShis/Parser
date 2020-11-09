@@ -15,8 +15,8 @@ public class Main {
                     System.out.println("Второй аргумент задает период поиска вакансий в месяцах от 1 до 12!");
                 }
             }
-            Sql sqlSite = new Sql("https://www.sql.ru/forum/job-offers/", jobSearchInMonths);
-            sqlSite.jobSearch(vacancyTitle);
+
+            Sql.jobSearch(vacancyTitle,jobSearchInMonths);
         }
     }
 }

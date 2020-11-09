@@ -1,11 +1,11 @@
-import java.util.Calendar;
+import java.time.LocalDate;
 
 public class Topic {
     private String nameOfTopic;
-    private Calendar date;
+    private LocalDate date;
     private String link;
 
-    public Topic(String nameOfTopic, Calendar date, String link) {
+    public Topic(String nameOfTopic, LocalDate date, String link) {
         this.nameOfTopic = nameOfTopic;
         this.date = date;
         this.link = link;
@@ -19,11 +19,11 @@ public class Topic {
         this.nameOfTopic = nameOfTopic;
     }
 
-    public Calendar getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(Calendar date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 

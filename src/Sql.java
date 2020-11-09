@@ -3,27 +3,24 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
-public class Sql extends Website {
-    public Sql(String name, int jobSearchInMonths) {
-        super(name, jobSearchInMonths);
-    }
+public class Sql {
+    private static String urlOfSite = "https://www.sql.ru/forum/job-offers/";
 
-    @Override
-    public ArrayList<Topic> getTopics() {
-        System.out.print("Parsing:");
-        Calendar dateSearch = Calendar.getInstance();
-        Calendar tempDate;
-        dateSearch.roll(Calendar.MONTH, -jobSearchInMonths);
-        int z = 0;
+    static public ArrayList<Vacancy> jobSearch(String nameOfVacancy, int jobSearchInMonths) {
+        int percent = 0;
         ArrayList<Topic> topics = new ArrayList<>();
+        LocalDate tempDate;
         Document doc = null;
+        System.out.print("Parsing:");
         try {
-            doc = Jsoup.connect(name).get();
+            doc = Jsoup.connect(urlOfSite).get();
             ArrayList<String> pages = new ArrayList<>(Arrays.asList(doc.select("table[class=sort_options]").select("a").text().split(" ")));
             int count = Integer.parseInt(pages.get(pages.size() - 1));
             int y = 1;
@@ -31,8 +28,8 @@ public class Sql extends Website {
             String date;
             String link = null;
 
-            while (y <= count) { //count
-                doc = Jsoup.connect(name + y).get();
+            while (y <= count) {
+                doc = Jsoup.connect(urlOfSite + y).get();
                 Elements forumTable = doc.select("table[class=forumTable]");
                 Elements icon_cell = forumTable.select("tr");
                 for (int i = 4; i < icon_cell.size(); i++) {
@@ -43,14 +40,14 @@ public class Sql extends Website {
                     }
                     date = icon_cell.get(i).select("td[class=altCol]").select("td[style=text-align:center]").text();
                     tempDate = stringToDate(date);
-                    if (tempDate.after(dateSearch)) {
+                    if (tempDate.isAfter(LocalDate.now().minusMonths(jobSearchInMonths))) {
                         topics.add(new Topic(nameOfTopic, tempDate, link));
                     }
                 }
                 y++;
-                if ((int) ((double) y / (double) count * 100) > z) {
-                    System.out.print(z + "% ");
-                    z += 10;
+                if ((int) ((double) y / (double) count * 100) > percent) {
+                    System.out.print(percent + "% ");
+                    percent += 10;
                 }
             }
         } catch (NumberFormatException e) {
@@ -60,34 +57,24 @@ public class Sql extends Website {
         }
         System.out.print("100%");
         System.out.println("");
-        return topics;
-    }
-
-    @Override
-    public ArrayList<Vacancy> getVacancies() {
-        ArrayList<Topic> topics = getTopics();
         System.out.print("Обработка вакансий:");
+
         ArrayList<Vacancy> vacancies = new ArrayList<>();
-        Document doc = null;
-        String text, date;
-        Calendar dateSearch = Calendar.getInstance();
-        Calendar tempDate;
-        dateSearch.roll(Calendar.MONTH, -jobSearchInMonths);
-        int i = 0;
-        int z = 0;
         try {
+            String text, date;
+            int i = 0;
             for (Topic topic : topics) {
                 doc = Jsoup.connect(topic.getLink()).get();
                 text = doc.select("td[class=msgBody]").text();
                 date = doc.select("td[class=msgFooter]").text();
                 tempDate = stringToDate(date);
-                if (tempDate.after(dateSearch)) {
+                if (tempDate.isAfter(LocalDate.now().minusMonths(jobSearchInMonths))) {
                     vacancies.add(new Vacancy(topic.getNameOfTopic(), tempDate, text));
                 }
 
-                if ((int) ((double) i / (double) topics.size() * 100) > z) {
-                    System.out.print(z + "% ");
-                    z += 10;
+                if ((int) ((double) i / (double) topics.size() * 100) > percent) {
+                    System.out.print(percent + "% ");
+                    percent += 10;
                 }
                 i++;
             }
@@ -96,7 +83,83 @@ public class Sql extends Website {
         }
         System.out.print("100%");
         System.out.println("");
+
+        Pattern pattern = Pattern.compile(nameOfVacancy);
+        Matcher matcher;
+        for (Vacancy vacancy : vacancies) {
+            matcher = pattern.matcher(vacancy.getNameOfVacancy());
+            if (matcher.find()) {
+                System.out.println(vacancy.getNameOfVacancy());
+                System.out.println(vacancy.getText());
+                System.out.println(vacancy.getDate().toString());
+                System.out.println("-------------------");
+            }
+        }
         return vacancies;
     }
 
+    private static LocalDate stringToDate(String date) {
+        LocalDate calendarDate;
+        if (date.contains("сегодня")) {
+            return calendarDate = LocalDate.now();
+        } else if (date.contains("вчера")) {
+            calendarDate = LocalDate.now();
+            return calendarDate = calendarDate.minusDays(1);
+        } else {
+            Matcher matcher;
+            int day = 1;
+            int month = 0;
+            int year = 2020;
+            Pattern dayPattern = Pattern.compile("^\\d{1,2}");
+            Pattern monthPattern = Pattern.compile("\\s\\D{3}");
+            Pattern yearPattern = Pattern.compile("\\d{2},");
+
+            matcher = dayPattern.matcher(date);
+            if (matcher.find()) day = Integer.parseInt(matcher.group());
+            matcher = monthPattern.matcher(date);
+            if (matcher.find()) {
+                switch (matcher.group().substring(1)) {
+                    case "янв":
+                        month = 1;
+                        break;
+                    case "фев":
+                        month = 2;
+                        break;
+                    case "мар":
+                        month = 3;
+                        break;
+                    case "апр":
+                        month = 4;
+                        break;
+                    case "май":
+                        month = 5;
+                        break;
+                    case "июн":
+                        month = 6;
+                        break;
+                    case "июл":
+                        month = 7;
+                        break;
+                    case "авг":
+                        month = 8;
+                        break;
+                    case "сен":
+                        month = 9;
+                        break;
+                    case "окт":
+                        month = 10;
+                        break;
+                    case "ноя":
+                        month = 11;
+                        break;
+                    case "дек":
+                        month = 12;
+                        break;
+                }
+            }
+            matcher = yearPattern.matcher(date);
+            if (matcher.find()) year = Integer.parseInt("20" + matcher.group().substring(0, 2));
+            return calendarDate = LocalDate.of(year, month, day);
+        }
+    }
 }

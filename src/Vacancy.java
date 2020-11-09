@@ -1,11 +1,11 @@
-import java.util.Calendar;
+import java.time.LocalDate;
 
 public class Vacancy {
     private String nameOfVacancy;
-    private Calendar date;
+    private LocalDate date;
     private String text;
 
-    public Vacancy(String nameOfVacancy, Calendar date, String text) {
+    public Vacancy(String nameOfVacancy, LocalDate date, String text) {
         this.nameOfVacancy = nameOfVacancy;
         this.date = date;
         this.text = text;
@@ -19,11 +19,11 @@ public class Vacancy {
         this.nameOfVacancy = nameOfVacancy;
     }
 
-    public Calendar getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(Calendar date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 
