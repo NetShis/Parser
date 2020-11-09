@@ -2,18 +2,21 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 
 public class Sql {
     private static String urlOfSite = "https://www.sql.ru/forum/job-offers/";
 
-    static public ArrayList<Vacancy> jobSearch(String nameOfVacancy, int jobSearchInMonths) {
+    static public List<Vacancy> jobSearch(String nameOfVacancy, int jobSearchInMonths) {
         int percent = 0;
         ArrayList<Topic> topics = new ArrayList<>();
         LocalDate tempDate;
@@ -57,8 +60,9 @@ public class Sql {
         }
         System.out.print("100%");
         System.out.println("");
-        System.out.print("Обработка вакансий:");
 
+        System.out.print("Обработка вакансий:");
+        percent = 0;
         ArrayList<Vacancy> vacancies = new ArrayList<>();
         try {
             String text, date;
@@ -86,16 +90,7 @@ public class Sql {
 
         Pattern pattern = Pattern.compile(nameOfVacancy);
         Matcher matcher;
-        for (Vacancy vacancy : vacancies) {
-            matcher = pattern.matcher(vacancy.getNameOfVacancy());
-            if (matcher.find()) {
-                System.out.println(vacancy.getNameOfVacancy());
-                System.out.println(vacancy.getText());
-                System.out.println(vacancy.getDate().toString());
-                System.out.println("-------------------");
-            }
-        }
-        return vacancies;
+        return vacancies.stream().filter(vacancy -> pattern.matcher(vacancy.getNameOfVacancy()).find()).collect(Collectors.toList());
     }
 
     private static LocalDate stringToDate(String date) {

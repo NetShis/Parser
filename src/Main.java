@@ -1,7 +1,16 @@
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+
+
 public class Main {
     public static void main(String[] args) {
-        String vacancyTitle = "Java";
-        int jobSearchInMonths = 3;
+        String vacancyTitle = "Python";
+        int jobSearchInMonths = 12;
 
         if (args.length != 2 && args.length != 0) {
             System.out.println("Введите сайт для поиска и " +
@@ -16,7 +25,28 @@ public class Main {
                 }
             }
 
-            Sql.jobSearch(vacancyTitle,jobSearchInMonths);
+            Path path = Paths.get("./Sql.txt");
+            List<Vacancy> vacancies = Sql.jobSearch(vacancyTitle, jobSearchInMonths);
+
+            try {
+                BufferedWriter writer = Files.newBufferedWriter(path, Charset.defaultCharset());
+                vacancies.stream().forEach(vacancy -> {
+                    try {
+                        writer.write(vacancy.getNameOfVacancy() +
+                                "\n" + vacancy.getDate().toString() +
+                                "\n" + vacancy.getText() +
+                                "\n" + "------------------" +
+                                "\n");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+                writer.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            System.out.println("Результат записан в файл " + path.getFileName());
         }
     }
 }
