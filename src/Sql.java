@@ -16,6 +16,16 @@ import java.util.stream.Collectors;
 public class Sql {
     private static String urlOfSite = "https://www.sql.ru/forum/job-offers/";
 
+    /**
+     * Сначала получаем количество страниц, потом циклом проходимся по всем страницам и парсим данные в
+     * ArrayList<Topic> topics. В массив не заносим первые четыре топика,
+     * так как это шапка и 3 топика с информацией о сайте.
+     * При этом проверяем дату топика с периодом поиска, если дата раньше jobSearchInMonths, то не создаем
+     * объект Topic и не заносим его в массив.
+     * <p>
+     * Далее из массива Topic(ов) создаем массив Vacancy(ий) фильтруем его и возвращаем
+     * List Vacancy(ий) отфильтрованных по названию топика.
+     */
     static public List<Vacancy> jobSearch(String nameOfVacancy, int jobSearchInMonths) {
         int percent = 0;
         ArrayList<Topic> topics = new ArrayList<>();
@@ -88,11 +98,17 @@ public class Sql {
         System.out.print("100%");
         System.out.println("");
 
-        Pattern pattern = Pattern.compile(nameOfVacancy);
+        Pattern pattern = Pattern.compile(".*" + nameOfVacancy + ".*");
         Matcher matcher;
         return vacancies.stream().filter(vacancy -> pattern.matcher(vacancy.getNameOfVacancy()).find()).collect(Collectors.toList());
     }
 
+    /**
+     * Текст переводим в LocalDate
+     *
+     * @param date
+     * @return
+     */
     private static LocalDate stringToDate(String date) {
         LocalDate calendarDate;
         if (date.contains("сегодня")) {
@@ -103,7 +119,7 @@ public class Sql {
         } else {
             Matcher matcher;
             int day = 1;
-            int month = 0;
+            int month = 1;
             int year = 2020;
             Pattern dayPattern = Pattern.compile("^\\d{1,2}");
             Pattern monthPattern = Pattern.compile("\\s\\D{3}");
